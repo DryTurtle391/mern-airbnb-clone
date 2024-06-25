@@ -90,6 +90,11 @@ app.get("/profile", (req, res) => {
   }
 });
 
+//Logout API
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json(true);
+});
+
 if (process.env.API_PORT) {
   app.listen(process.env.API_PORT);
 }
