@@ -4,7 +4,8 @@
 
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+textarea {
   @apply w-full my-1 px-2 py-2 border rounded-2xl;
 }
 
