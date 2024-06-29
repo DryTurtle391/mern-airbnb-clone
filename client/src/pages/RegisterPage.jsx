@@ -54,7 +54,7 @@ export default function RegisterPage() {
               setPassword(event.target.value);
             }}
           />
-          <button className="login">Register</button>
+          <button className="primary">Register</button>
           <div className="text-center py-1 text-gray-500">
             Already a Member?
             <Link to={"/login"} className="underline text-black px-1">

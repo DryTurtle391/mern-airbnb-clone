@@ -43,7 +43,7 @@ export default function LoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
-          <button className="login">Login</button>
+          <button className="primary">Login</button>
           <div className="text-center py-1 text-gray-500">
             Don't have an account yet?
             <Link to={"/register"} className="underline text-black px-1">
