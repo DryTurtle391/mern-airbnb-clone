@@ -132,8 +132,8 @@ app.post("/places", (req, res) => {
   const {
     title,
     address,
-    photos,
-    descriptiong,
+    addedPhotos,
+    description,
     perks,
     extraInfo,
     checkIn,
@@ -150,8 +150,8 @@ app.post("/places", (req, res) => {
           owner: id,
           title,
           address,
-          photos,
-          descriptiong,
+          photos: addedPhotos,
+          description,
           perks,
           extraInfo,
           checkIn,
@@ -160,7 +160,66 @@ app.post("/places", (req, res) => {
         });
         res.json(placeDoc);
       } catch (error) {
-        res.json(null);
+        res.json(error);
+      }
+    });
+  }
+});
+
+//Get Places
+app.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (error, userData) => {
+      const { id } = userData;
+      res.json(await Place.find({ owner: id }));
+    });
+  }
+});
+
+//Get Specific place
+app.get("/places/:id", async (req, res) => {
+  const { id } = req.params;
+  res.json(await Place.findById(id));
+});
+
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id,
+    title,
+    address,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (error, userData) => {
+      if (error) throw error;
+      const placeDoc = await Place.findById(id);
+      if (userData.id === placeDoc.owner.toString()) {
+        try {
+          placeDoc.set({
+            title,
+            address,
+            addedPhotos,
+            description,
+            perks,
+            extraInfo,
+            checkIn,
+            checkOut,
+            maxGuests,
+          });
+
+          res.json(await placeDoc.save());
+        } catch (error) {
+          res.json(error);
+        }
       }
     });
   }

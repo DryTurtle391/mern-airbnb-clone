@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Perks from "../Perks";
 import PhotosUploader from "../PhotosUploader";
 import axios from "axios";
 import AccountNav from "../AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 export default function PlacesFormPage() {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -17,9 +18,27 @@ export default function PlacesFormPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [redirect, setRedirect] = useState(false);
 
-  async function addNewPlace(event) {
+  useEffect(() => {
+    if (!id) {
+      return;
+    } else {
+      axios.get("/places/" + id).then((response) => {
+        const { data } = response;
+        setTitle(data.title);
+        setAddress(data.address);
+        setDescription(data.description);
+        setAddedPhotos(data.photos);
+        setPerks(data.perks);
+        setExtraInfo(data.extraInfo);
+        setCheckIn(data.checkIn);
+        setCheckOut(data.checkOut);
+        setMaxGuests(data.maxGuests);
+      });
+    }
+  }, [id]);
+  async function savePlace(event) {
     event.preventDefault();
-    await axios.post("/places", {
+    const placeData = {
       title,
       address,
       addedPhotos,
@@ -29,8 +48,18 @@ export default function PlacesFormPage() {
       checkIn,
       checkOut,
       maxGuests,
-    });
-    setRedirect(true);
+    };
+    if (id) {
+      //Update
+      await axios.put("/places", {
+        id,
+        ...placeData,
+      });
+      setRedirect(true);
+    } else {
+      await axios.post("/places", placeData);
+      setRedirect(true);
+    }
   }
 
   if (redirect) {
@@ -40,7 +69,7 @@ export default function PlacesFormPage() {
     <>
       <AccountNav />
       <div className="new-place">
-        <form onSubmit={addNewPlace}>
+        <form onSubmit={savePlace}>
           <h2 className="text-xl mt-4 ">Title</h2>
           <input
             type="text"
