@@ -4,6 +4,7 @@ const app = express();
 const dotenv = require("dotenv");
 const { default: mongoose } = require("mongoose");
 const User = require("./models/User.js");
+const Place = require("./models/Place.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -123,6 +124,46 @@ app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
     uploadedFilesPaths.push(newPath.replace("uploads\\", ""));
   }
   res.json(uploadedFilesPaths);
+});
+
+//Add New Place
+app.post("/places", (req, res) => {
+  const { token } = req.cookies;
+  const {
+    title,
+    address,
+    photos,
+    descriptiong,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (error, userData) => {
+      if (error) throw error;
+      const { id } = userData;
+      try {
+        const placeDoc = await Place.create({
+          owner: id,
+          title,
+          address,
+          photos,
+          descriptiong,
+          perks,
+          extraInfo,
+          checkIn,
+          checkOut,
+          maxGuests,
+        });
+        res.json(placeDoc);
+      } catch (error) {
+        res.json(null);
+      }
+    });
+  }
 });
 
 if (process.env.API_PORT) {
