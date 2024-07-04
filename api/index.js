@@ -183,6 +183,7 @@ app.get("/places/:id", async (req, res) => {
   res.json(await Place.findById(id));
 });
 
+//Updated Places
 app.put("/places", async (req, res) => {
   const { token } = req.cookies;
   const {
@@ -207,7 +208,7 @@ app.put("/places", async (req, res) => {
           placeDoc.set({
             title,
             address,
-            addedPhotos,
+            photos: addedPhotos,
             description,
             perks,
             extraInfo,
