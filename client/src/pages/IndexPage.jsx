@@ -8,21 +8,14 @@ export default function IndexPage() {
 
   useEffect(() => {
     axios.get("/places").then((response) => {
-      setPlaces([
-        ...response.data,
-        ...response.data,
-        ...response.data,
-        ...response.data,
-        ,
-        ...response.data,
-      ]);
+      setPlaces([...response.data]);
     });
   }, []);
   return (
     <div className="mt-6 gap-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {places.length > 0 &&
         places.map((place) => (
-          <div>
+          <Link to={"/place/" + place._id}>
             <div className="bg-gray-500 rounded-2xl flex aspect-square">
               {place.photos?.[0] && (
                 <img
@@ -37,7 +30,7 @@ export default function IndexPage() {
             <div className="mt-1">
               <span className="font-bold">${place.price}</span> per night
             </div>
-          </div>
+          </Link>
         ))}
     </div>
   );
