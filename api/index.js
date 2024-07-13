@@ -139,6 +139,7 @@ app.post("/places", (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price,
   } = req.body;
 
   if (token) {
@@ -157,6 +158,7 @@ app.post("/places", (req, res) => {
           checkIn,
           checkOut,
           maxGuests,
+          price,
         });
         res.json(placeDoc);
       } catch (error) {
@@ -167,7 +169,7 @@ app.post("/places", (req, res) => {
 });
 
 //Get Places
-app.get("/places", (req, res) => {
+app.get("/user-places", (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (error, userData) => {
@@ -197,6 +199,7 @@ app.put("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price,
   } = req.body;
 
   if (token) {
@@ -215,6 +218,7 @@ app.put("/places", async (req, res) => {
             checkIn,
             checkOut,
             maxGuests,
+            price,
           });
 
           res.json(await placeDoc.save());
@@ -224,6 +228,11 @@ app.put("/places", async (req, res) => {
       }
     });
   }
+});
+
+//Get All Places
+app.get("/places", async (req, res) => {
+  res.json(await Place.find());
 });
 
 if (process.env.API_PORT) {
